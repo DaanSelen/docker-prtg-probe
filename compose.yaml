@@ -1,0 +1,31 @@
+services:
+  linux-probe:
+    image: ghcr.io/daanselen/docker-prtg-probe:main
+    # image: ghcr.io/daanselen/docker-prtg-probe:main-ubuntu
+    # image: ghcr.io/daanselen/docker-prtg-probe:main-rhel
+    restart: unless-stopped
+    # environment:
+    #   PRTGMPPROBE__ID=fde8f991-3d96-46ac-9c86-bc6638b61904
+    #   PRTGMPPROBE__LOGGING__JOURNALD__LEVEL=off
+    #   PRTGMPPROBE__MAX_SCHEDULING_DELAY=300
+    #   PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX=PRTGMPROBE
+    #   PRTGMPPROBE__NATS__CLIENT_NAME=linux-probe@my-machine
+    #   PRTGMPPROBE__LOGGING__CONSOLE__LEVEL=info
+    #   PRTGMPPROBE__HEARTBEAT_INTERVAL=30
+    #   PRTGMPPROBE__NAME=linux-probe@my-machine
+    #   PRTGMPPROBE__MOMO__DIR=/opt/paessler/mpprobe/monitoringmodules/
+    #   PRTGMPPROBE__ID_FILE=/config/id.txt
+    #   PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME=true
+    volumes:
+      # - "./config:/config:rw"
+      - "probe_config:/config:rw"
+      # - "./scripts:/opt/paessler/share/scripts:ro"
+      - "probe_scripts:/opt/paessler/share/scripts:ro"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+volumes:
+  probe_config:
+    driver: local
+  probe_scripts:
+    driver: local
