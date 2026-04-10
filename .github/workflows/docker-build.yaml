@@ -51,7 +51,7 @@ jobs:
         id: meta
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}
+            ghcr.io/${{ github.repository }}
           tags: |
             type=ref,event=branch,enable=${{matrix.variant == 'debian'}}
             type=ref,event=branch,suffix=${{ matrix.suffix }}
