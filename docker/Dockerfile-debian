@@ -7,8 +7,18 @@ ARG PKG_NAME=prtgmpprobe
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV CONFIG_FILE=/config/config.yml
-ENV PROBE_ID_FILE=/config/id.txt
-ENV PROBE_ID=
+ENV PRTGMPPROBE__NAME=
+ENV PRTGMPPROBE__ID_FILE=/config/id.txt
+ENV PRTGMPPROBE__ID=
+ENV PRTGMPPROBE__MOMO__DIR="/opt/paessler/mpprobe/monitoringmodules/"
+ENV PRTGMPPROBE__MAX_SCHEDULING_DELAY="300"
+ENV PRTGMPPROBE__HEARTBEAT_INTERVAL="30"
+# Will be set at runtime if empty
+ENV PRTGMPPROBE__NATS__CLIENT_NAME=""
+ENV PRTGMPPROBE__LOGGING__CONSOLE__LEVEL="info"
+ENV PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME="true"
+ENV PRTGMPPROBE__LOGGING__JOURNALD__LEVEL="off"
+ENV PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX="PRTGMPROBE"
 
 # Debian its base image already has lots of packages, which we will upgrade at once
 RUN echo "Upgrading System Packages"; \

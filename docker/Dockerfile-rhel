@@ -7,8 +7,18 @@ ARG PKG_NAME=prtgmpprobe
 ARG LIBRHSM_DEBUG=0
 
 ENV CONFIG_FILE=/config/config.yml
-ENV PROBE_ID_FILE=/config/id.txt
-ENV PROBE_ID=
+ENV PRTGMPPROBE__NAME=
+ENV PRTGMPPROBE__ID_FILE=/config/id.txt
+ENV PRTGMPPROBE__ID=
+ENV PRTGMPPROBE__MOMO__DIR="/opt/paessler/mpprobe/monitoringmodules/"
+ENV PRTGMPPROBE__MAX_SCHEDULING_DELAY="300"
+ENV PRTGMPPROBE__HEARTBEAT_INTERVAL="30"
+# Will be set at runtime if empty
+ENV PRTGMPPROBE__NATS__CLIENT_NAME=""
+ENV PRTGMPPROBE__LOGGING__CONSOLE__LEVEL="info"
+ENV PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME="true"
+ENV PRTGMPPROBE__LOGGING__JOURNALD__LEVEL="off"
+ENV PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX="PRTGMPROBE"
 
 # Upgrade the RHEL packages using microdnf
 RUN echo "Upgrading System Packages"; \
@@ -54,7 +64,7 @@ COPY ./src/entrypoint.sh /entrypoint.sh
 
 WORKDIR /config
 
-#USER paessler_mpprobe
+USER paessler_mpprobe
 
 # The entrypoint, which ALWAYS runs at startup as the first command
 ENTRYPOINT ["/entrypoint.sh"]
