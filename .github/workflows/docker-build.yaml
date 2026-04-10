@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Docker Image
     permissions:
+      security-events: read
       contents: read
       packages: write
       actions: read
