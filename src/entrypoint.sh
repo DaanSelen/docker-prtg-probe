@@ -2,8 +2,6 @@
 set -eu
 
 # Environment variables passed from the Dockerfile
-
-PROBE_BINARY="/opt/paessler/mpprobe/prtgmpprobe"
 HOSTNAME=$(hostname 2> /dev/null || cat /etc/hostname)
 CONFIG_FILE="${PRTGMPPROBE__CONFIG_FILE:-/config/config.yml}"
 

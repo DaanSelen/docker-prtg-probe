@@ -9,7 +9,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # PRTGMPPROBE__NAME
 # PRTGMPPROBE__ID
 
+ENV PROBE_BINARY=/opt/paessler/mpprobe/prtgmpprobe
 ENV CONFIG_FILE=/config/config.yml
+
 ENV PRTGMPPROBE__ID_FILE=/config/id.txt
 ENV PRTGMPPROBE__MOMO__DIR="/opt/paessler/mpprobe/monitoringmodules/"
 ENV PRTGMPPROBE__MAX_SCHEDULING_DELAY="300"
@@ -32,6 +34,7 @@ RUN echo "Installing Probe Dependencies"; \
         ca-certificates \
         curl \
         gosu \
+        libcap2-bin \
         python3-minimal && \
     apt-get clean
 
@@ -63,7 +66,8 @@ RUN echo "Installing the PRTG Multi-Platform Probe"; \
         echo "Failed to find a match for '${PKG_NAME}' in the apt cache"; \
         exit 1; \
     fi; \
-    apt-get clean
+    apt-get clean; \
+    setcap cap_net_raw+ep "${PROBE_BINARY}"
 
 # Configuration directory for the PRTG Multi-Platform Probe, for example a: config.yml
 VOLUME /config

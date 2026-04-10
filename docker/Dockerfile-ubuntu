@@ -9,7 +9,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # PRTGMPPROBE__NAME
 # PRTGMPPROBE__ID
 
+ENV PROBE_BINARY=/opt/paessler/mpprobe/prtgmpprobe
 ENV CONFIG_FILE=/config/config.yml
+
 ENV PRTGMPPROBE__ID_FILE=/config/id.txt
 ENV PRTGMPPROBE__MOMO__DIR="/opt/paessler/mpprobe/monitoringmodules/"
 ENV PRTGMPPROBE__MAX_SCHEDULING_DELAY="300"
@@ -32,6 +34,7 @@ RUN echo "Installing Probe Dependencies"; \
         ca-certificates \
         curl \
         gosu \
+        libcap2-bin \
         python3-minimal && \
     apt-get clean
 

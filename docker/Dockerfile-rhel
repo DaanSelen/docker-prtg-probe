@@ -6,12 +6,12 @@ FROM docker.io/redhat/ubi10-minimal:latest AS runtime
 ARG PKG_NAME=prtgmpprobe
 ARG LIBRHSM_DEBUG=0
 
-ARG TARGETARCH
-
 # PRTGMPPROBE__NAME
 # PRTGMPPROBE__ID
 
+ENV PROBE_BINARY=/opt/paessler/mpprobe/prtgmpprobe
 ENV CONFIG_FILE=/config/config.yml
+
 ENV PRTGMPPROBE__ID_FILE=/config/id.txt
 ENV PRTGMPPROBE__MOMO__DIR="/opt/paessler/mpprobe/monitoringmodules/"
 ENV PRTGMPPROBE__MAX_SCHEDULING_DELAY="300"
@@ -22,6 +22,8 @@ ENV PRTGMPPROBE__LOGGING__CONSOLE__LEVEL="info"
 ENV PRTGMPPROBE__LOGGING__CONSOLE__WITHOUT_TIME="true"
 ENV PRTGMPPROBE__LOGGING__JOURNALD__LEVEL="off"
 ENV PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX="PRTGMPROBE"
+
+ARG TARGETARCH
 
 # Upgrade the RHEL packages using microdnf
 RUN echo "Upgrading System Packages"; \
