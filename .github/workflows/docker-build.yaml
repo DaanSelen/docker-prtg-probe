@@ -2,13 +2,14 @@ name: Docker Build
 
 "on":
   "workflow_dispatch":
-  branches:
-    - 'main'
-  tags:
-    - '*'
-  paths:
-    - 'src/**'
-    - 'docker/**'
+  push:
+    branches:
+      - 'main'
+    tags:
+      - '*'
+    paths:
+      - 'src/**'
+      - 'docker/**'
 
 jobs:
   build-image:
