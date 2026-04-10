@@ -6,6 +6,8 @@ FROM docker.io/redhat/ubi10-minimal:latest AS runtime
 ARG PKG_NAME=prtgmpprobe
 ARG LIBRHSM_DEBUG=0
 
+ARG TARGETARCH
+
 ENV CONFIG_FILE=/config/config.yml
 ENV PRTGMPPROBE__NAME=
 ENV PRTGMPPROBE__ID_FILE=/config/id.txt
@@ -30,9 +32,10 @@ RUN echo "Installing Probe Dependencies"; \
     microdnf install --noplugins -y \
         ca-certificates \
         curl \
-        gosu \
-        python3 && \
-    microdnf --noplugins clean all
+        python3 \
+        shadow-utils && \
+    microdnf --noplugins clean all && \
+    curl https://github.com/tianon/gosu/releases/download/1.19/gosu-${TARGETARCH} --output /usr/bin/gosu
 
 # Add the Paessler repository and install the probe package
 RUN echo "Installing the dnf/yum repository"; \
