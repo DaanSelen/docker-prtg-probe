@@ -74,6 +74,7 @@ fi
 echo "Exporting variables"
 for var in $(env | grep "PRTGMPPROBE__"); do
     export "${var}"
+    echo "Exported: ${var}"
 done
 
 # Start the binary
