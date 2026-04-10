@@ -8,7 +8,7 @@ PROBE_BINARY="/opt/paessler/mpprobe/prtgmpprobe"
 HOSTNAME=$(hostname 2> /dev/null || cat /etc/hostname)
 
 CONFIG_FILE="${PRTGMPPROBE__CONFIG_FILE:-/config/config.yml}"
-PROBE_NAME="${PRTGMPPROBE__NAME:-prtg-mp-probe@$HOSTNAME}"
+PROBE_NAME="${PRTGMPPROBE__NAME:-linux-probe@$HOSTNAME}"
 PROBE_ID_FILE="${PRTGMPPROBE__ID_FILE:-/config/id.txt}"
 PROBE_ID="${PRTGMPPROBE__ID:-}"
 
