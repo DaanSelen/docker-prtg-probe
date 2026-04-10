@@ -1,0 +1,60 @@
+#
+# RHEL-based version for the container
+#
+FROM docker.io/redhat/ubi10-minimal:latest AS runtime
+
+ARG PKG_NAME=prtgmpprobe
+ARG LIBRHSM_DEBUG=0
+
+ENV CONFIG_FILE=/config/config.yml
+ENV PROBE_ID_FILE=/config/id.txt
+ENV PROBE_ID=
+
+# Upgrade the RHEL packages using microdnf
+RUN echo "Upgrading System Packages"; \
+    microdnf update --noplugins -y && \
+    microdnf upgrade --noplugins --nodocs -y
+
+# Install dependencies for the PRTG multi-platform probe itself
+RUN echo "Installing Probe Dependencies"; \
+    microdnf install --noplugins -y \
+        ca-certificates \
+        curl \
+        python3 && \
+    microdnf --noplugins clean all
+
+# Add the Paessler repository and install the probe package
+RUN echo "Installing the dnf/yum repository"; \
+    . /etc/os-release && \
+    if curl -fsSL "https://packages.paessler.com/docs/rpm-sources/rhel-${VERSION_ID%%.*}.repo" > "/etc/yum.repos.d/paessler.repo"; then \
+        echo "The Paessler dnf/yum repo has been installed @ /etc/yum.repos.d/paessler.repo"; \
+    else \
+        echo "Failed to install the Paessler dnf/yum sources list"; \
+        exit 1; \
+    fi
+
+RUN echo "Installing the PRTG Multi-Platform Probe"; \
+    microdnf update --noplugins -y && \
+    if [ -n "$(microdnf repoquery --noplugins ${PKG_NAME})" ]; then \
+        echo "Found a matching package, installing..."; \
+        microdnf install -y --noplugins --nodocs "${PKG_NAME}" && \
+        echo "Successfully installed ${PKG_NAME}"; \
+    else \
+        echo "Failed to find a match for '${PKG_NAME}' in the dnf/yum cache"; \
+        exit 1; \
+    fi; \
+    microdnf --noplugins clean all
+
+# Configuration directory for the PRTG Multi-Platform Probe, for example a: config.yml
+VOLUME /config
+# Scripts directory for the Script v2 sensor
+VOLUME /opt/paessler/share/scripts
+
+COPY ./src/entrypoint.sh /entrypoint.sh
+
+WORKDIR /config
+
+#USER paessler_mpprobe
+
+# The entrypoint, which ALWAYS runs at startup as the first command
+ENTRYPOINT ["/entrypoint.sh"]

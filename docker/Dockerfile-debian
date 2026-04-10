@@ -1,0 +1,68 @@
+#
+# Debian-based version for the container
+#
+FROM docker.io/debian:trixie-slim AS runtime
+
+ARG PKG_NAME=prtgmpprobe
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV CONFIG_FILE=/config/config.yml
+ENV PROBE_ID_FILE=/config/id.txt
+ENV PROBE_ID=
+
+# Debian its base image already has lots of packages, which we will upgrade at once
+RUN echo "Upgrading System Packages"; \
+    apt-get update && \
+    apt-get full-upgrade -y
+
+# Install dependencies for the PRTG multi-platform probe itself
+RUN echo "Installing Probe Dependencies"; \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        ca-certificates \
+        curl \
+        python3-minimal && \
+    apt-get clean
+
+# Add the Paessler repository and install the probe package
+RUN echo "Installing the apt repository"; \
+    if curl -fsSL "https://packages.paessler.com/keys/paessler.asc" --output "/etc/apt/keyrings/paessler-archive-keyring.asc"; then \
+        ln -s "/etc/apt/keyrings/paessler-archive-keyring.asc" "/usr/share/keyrings/paessler-archive-keyring.asc" && \
+        echo "The Paessler apt key has been installed @ /etc/apt/keyrings/paessler-archive-keyring.asc"; \
+    else \
+        echo "Failed to install the Paessler apt key"; \
+        exit 1; \
+    fi; \
+\
+    . /etc/os-release && \
+    if curl -fsSL "https://packages.paessler.com/docs/apt-sources/${VERSION_CODENAME}.sources" > "/etc/apt/sources.list.d/paessler.sources"; then \
+        echo "The Paessler apt sources list has been installed @ /etc/apt/sources.list.d/paessler.sources"; \
+    else \
+        echo "Failed to install the Paessler apt sources list"; \
+        exit 1; \
+    fi
+
+RUN echo "Installing the PRTG Multi-Platform Probe"; \
+    apt-get update && \
+    if [ -n "$(apt-cache search ^${PKG_NAME}$)" ]; then \
+        echo "Found a matching package, installing..."; \
+        apt-get install -y "${PKG_NAME}" && \
+        echo "Successfully installed ${PKG_NAME}"; \
+    else \
+        echo "Failed to find a match for '${PKG_NAME}' in the apt cache"; \
+        exit 1; \
+    fi; \
+    apt-get clean
+
+# Configuration directory for the PRTG Multi-Platform Probe, for example a: config.yml
+VOLUME /config
+# Scripts directory for the Script v2 sensor
+VOLUME /opt/paessler/share/scripts
+
+COPY ./src/entrypoint.sh /entrypoint.sh
+
+WORKDIR /config
+
+USER paessler_mpprobe
+
+# The entrypoint, which ALWAYS runs at startup as the first command
+ENTRYPOINT ["/entrypoint.sh"]
