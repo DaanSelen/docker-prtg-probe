@@ -1,0 +1,19 @@
+name: Commit lint
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    types:
+      - opened
+      - edited
+
+jobs:
+  check-and-test:
+    runs-on: ubuntu-latest
+    container: commitlint/commitlint:20.5.1
+    steps:
+      - uses: actions/checkout@v6
+      - name: lint pull request title
+        run: |
+          echo "${{ github.event.pull_request.title }}" | commitlint --config .commitlintrc.json
