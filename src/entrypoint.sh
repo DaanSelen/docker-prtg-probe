@@ -70,6 +70,7 @@ fi
 
 # Export all the environment variables
 
+echo "Exporting variables"
 export PROBE_NAME
 export PRTGMPPROBE__MOMO__DIR="${PRTGMPPROBE__MOMO__DIR:-/opt/paessler/mpprobe/monitoringmodules/}"
 export PRTGMPPROBE__MAX_SCHEDULING_DELAY="${PRTGMPPROBE__MAX_SCHEDULING_DELAY:-300}"
@@ -82,6 +83,7 @@ export PRTGMPPROBE__LOGGING__JOURNALD__LEVEL="${PRTGMPPROBE__LOGGING__JOURNALD__
 export PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX="${PRTGMPPROBE__LOGGING__JOURNALD__FIELD_PREFIX:-PRTGMPROBE}"
 
 # Print all the configuration which is going to be used
+echo "Printing runtime environment"
 env | grep PRTGMPROBE__ >&2 || true
 
 # Start the binary
