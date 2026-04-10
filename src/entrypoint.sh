@@ -38,9 +38,11 @@ fi
 
 # If there is no line starting with: 'id:'
 if ! grep -q "^id:" "${CONFIG_FILE}"; then
+    echo "Did not find 'id' key in ${CONFIG_FILE}"
 
     # If the environment variable 'PROBE_ID' is empty
     if [ -z "${PROBE_ID}" ]; then
+        echo "Did not find 'PROBE_ID' environment variable"
 
         # If the ID file is not on the filesystem
         if [ ! -f "${PROBE_ID_FILE}" ]; then
@@ -52,12 +54,18 @@ if ! grep -q "^id:" "${CONFIG_FILE}"; then
                 echo "Manual investigation is required" >&2
                 exit 1
             fi
+        else
+            echo "Found an existing file @ ${PROBE_ID_FILE}"
         fi
 
         PROBE_ID="$(cat ${PROBE_ID_FILE})"
+    else
+        echo "Found a non-empty environment variable with the name 'PROBE_ID'"
     fi
 
     export PROBE_ID
+else
+    echo "Found an 'id' key in ${CONFIG_FILE} which will be used"
 fi
 
 # Export all the environment variables
