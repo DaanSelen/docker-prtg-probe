@@ -33,7 +33,7 @@ jobs:
             suffix: -rhel
     steps:
       - uses: actions/checkout@v5
-      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-qemu-action@v4
         with:
           cache-image: false
           platforms: linux/amd64,linux/arm64
