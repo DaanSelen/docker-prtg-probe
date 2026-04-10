@@ -30,6 +30,7 @@ RUN echo "Installing Probe Dependencies"; \
     apt-get install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
         curl \
+        gosu \
         python3-minimal && \
     apt-get clean
 
@@ -71,8 +72,6 @@ VOLUME /opt/paessler/share/scripts
 COPY ./src/entrypoint.sh /entrypoint.sh
 
 WORKDIR /config
-
-USER paessler_mpprobe
 
 # The entrypoint, which ALWAYS runs at startup as the first command
 ENTRYPOINT ["/entrypoint.sh"]

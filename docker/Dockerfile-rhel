@@ -30,6 +30,7 @@ RUN echo "Installing Probe Dependencies"; \
     microdnf install --noplugins -y \
         ca-certificates \
         curl \
+        gosu \
         python3 && \
     microdnf --noplugins clean all
 
@@ -63,8 +64,6 @@ VOLUME /opt/paessler/share/scripts
 COPY ./src/entrypoint.sh /entrypoint.sh
 
 WORKDIR /config
-
-USER paessler_mpprobe
 
 # The entrypoint, which ALWAYS runs at startup as the first command
 ENTRYPOINT ["/entrypoint.sh"]

@@ -4,14 +4,12 @@ set -eu
 # Environment variables passed from the Dockerfile
 
 PROBE_BINARY="/opt/paessler/mpprobe/prtgmpprobe"
-
 HOSTNAME=$(hostname 2> /dev/null || cat /etc/hostname)
-
 CONFIG_FILE="${PRTGMPPROBE__CONFIG_FILE:-/config/config.yml}"
 
-PRTGMPPROBE__NAME="${PRTGMPPROBE__NAME:-linux-probe@$HOSTNAME}"
 PRTGMPPROBE__ID_FILE="${PRTGMPPROBE__ID_FILE:-/config/id.txt}"
 PRTGMPPROBE__ID="${PRTGMPPROBE__ID:-}"
+PRTGMPPROBE__NAME="${PRTGMPPROBE__NAME:-linux-probe@$HOSTNAME}"
 
 # Refuse to accept sensitive data as env variable
 
@@ -28,7 +26,6 @@ do
 done
 
 # Validate configuration file exists
-
 if [ ! -f "${CONFIG_FILE}" ]; then
     echo "ERROR: Config file not found @ ${CONFIG_FILE}" >&2
     echo "Example configuration:" >&2
@@ -74,15 +71,15 @@ if [ -z "{PRTGMPPROBE__NATS__CLIENT_NAME}" ]; then
     PRTGMPPROBE__NATS__CLIENT_NAME="${PRTGMPPROBE__NAME}"
 fi
 
-# Print all the configuration which is going to be used
-echo "Printing runtime environment"
-env | grep PRTGMPROBE__ >&2 || true
+echo "Exporting variables"
+for var in $(env | grep "PRTGMPPROBE__"); do
+    export "${var}"
+done
 
 # Start the binary
 echo $(date)
 echo "Starting binary"
 echo "---"
 
-exec "${PROBE_BINARY}" \
-  --config "${CONFIG_FILE}" \
-  "$@"
+exec gosu paessler_mpprobe:paessler_mpprobe \
+    "${PROBE_BINARY}" --config "${CONFIG_FILE}" "$@"
