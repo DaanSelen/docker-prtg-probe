@@ -8,8 +8,9 @@ HOSTNAME=$(hostname 2> /dev/null || cat /etc/hostname)
 CONFIG_FILE="${PRTGMPPROBE__CONFIG_FILE:-/config/config.yml}"
 
 PRTGMPPROBE__ID_FILE="${PRTGMPPROBE__ID_FILE:-/config/id.txt}"
-PRTGMPPROBE__ID="${PRTGMPPROBE__ID:-}"
-PRTGMPPROBE__NAME="${PRTGMPPROBE__NAME:-linux-probe@$HOSTNAME}"
+
+export PRTGMPPROBE__ID="${PRTGMPPROBE__ID:-}"
+export PRTGMPPROBE__NAME="${PRTGMPPROBE__NAME:-linux-probe@$HOSTNAME}"
 
 # Refuse to accept sensitive data as env variable
 
@@ -57,7 +58,7 @@ if ! grep -q "^id:" "${CONFIG_FILE}"; then
             echo "Found an existing file @ ${PRTGMPPROBE__ID_FILE}"
         fi
 
-        PRTGMPPROBE__ID="$(cat ${PRTGMPPROBE__ID_FILE})"
+        export PRTGMPPROBE__ID="$(cat ${PRTGMPPROBE__ID_FILE})"
     else
         echo "Found a non-empty environment variable with the name 'PRTGMPPROBE__ID'"
     fi
@@ -66,16 +67,12 @@ else
 fi
 echo "Runtime ID: ${PRTGMPPROBE__ID}"
 
-if [ -z "{PRTGMPPROBE__NATS__CLIENT_NAME}" ]; then
+if [ -z "${PRTGMPPROBE__NATS__CLIENT_NAME}" ]; then
     echo "Setting PRTGMPPROBE__NATS__CLIENT_NAME since its empty"
     PRTGMPPROBE__NATS__CLIENT_NAME="${PRTGMPPROBE__NAME}"
 fi
 
-echo "Exporting variables"
-for var in $(env | grep "PRTGMPPROBE__"); do
-    export "${var}"
-    echo "Exported: ${var}"
-done
+env | grep "PRTGMPPROBE__"
 
 # Start the binary
 echo $(date)
