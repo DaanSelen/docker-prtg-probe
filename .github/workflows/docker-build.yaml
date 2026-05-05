@@ -60,8 +60,9 @@ jobs:
             type=ref,event=branch,enable=${{matrix.variant == 'debian'}}
             type=ref,event=branch,suffix=${{ matrix.suffix }}
             type=ref,event=tag,suffix=${{ matrix.suffix }}
-            type=raw,value=latest,enable=${{startsWith(github.ref, 'refs/tags/') && matrix.variant != 'debian'}},suffix=${{ matrix.suffix }}
             type=raw,value=latest,enable=${{startsWith(github.ref, 'refs/tags/') && matrix.variant == 'debian'}}
+            type=raw,value=latest-ubuntu,enable=${{ startsWith(github.ref, 'refs/tags/') && matrix.variant == 'ubuntu' }}
+            type=raw,value=latest-rhel,enable=${{ startsWith(github.ref, 'refs/tags/') && matrix.variant == 'rhel' }}
       - uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' }}
